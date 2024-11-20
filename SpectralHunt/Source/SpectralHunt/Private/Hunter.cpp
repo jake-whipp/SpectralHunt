@@ -76,8 +76,9 @@ void AHunter::StrafeHandler(const FInputActionValue& Value)
 
 void AHunter::TurnHandler(const FInputActionValue& Value)
 {
-	// TODO: Sensitivity multiplier here?
-	AddControllerYawInput(Value.Get<float>());
+	// Don't want lateral turning to be faster than vertical turning
+	const float fSensitivityDampFactor = 2.0f;
+	AddControllerYawInput(Value.Get<float>() * (MouseSensitivity / fSensitivityDampFactor));
 }
 
 void AHunter::LookUpHandler(const FInputActionValue& Value)
