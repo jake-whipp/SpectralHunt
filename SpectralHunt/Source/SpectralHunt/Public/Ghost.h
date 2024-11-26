@@ -28,6 +28,6 @@ public:
 
 private:
 	UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* ActorMesh;
+	USkeletalMeshComponent* GhostMesh;
 
 };

@@ -9,8 +9,9 @@ AGhost::AGhost()
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	ActorMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Actor Mesh"));
-	ActorMesh->SetupAttachment(RootComponent);
+	GhostMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("GhostMesh"));
+	GhostMesh->SetupAttachment(RootComponent);
+	//GhostMesh->SetSkeletalMesh(GhostSkeletalMesh);
 }
 
 // Called when the game starts or when spawned
