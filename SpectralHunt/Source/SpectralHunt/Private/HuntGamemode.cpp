@@ -16,20 +16,34 @@ void AHuntGamemode::BeginPlay()
     Super::BeginPlay();
     UE_LOG(LogTemp, Warning, TEXT("GameMode BeginPlay Called!"));
 
-    FVector SpawnLocation = FVector(0, 0, 0);  // Choose your spawn location (could be randomized)
+    FVector SpawnLocation = FVector(-60.0, -20.0, 0.0);  // Choose your spawn location (could be randomized)
     FRotator SpawnRotation = FRotator(0, 0, 0); // Set rotation if needed
 
     // Make sure that you spawn the pawn using the right class
-    AGhost* SpawnedEnemy = GetWorld()->SpawnActor<AGhost>(
+    AGhost* SpawnedGhost = GetWorld()->SpawnActor<AGhost>(
         AGhost::StaticClass(),  // The class of the enemy pawn to spawn
         SpawnLocation,                       // Spawn location
         SpawnRotation                        // Spawn rotation
     );
 
-    if (SpawnedEnemy)
+    if (SpawnedGhost)
     {
-        // Optionally, you can perform any post-spawn setup here
-        UE_LOG(LogTemp, Warning, TEXT("Spawned enemy at location: %s"), *SpawnLocation.ToString());
+        // Choose ghost mesh
+
+        // 
+        // /Game/Assets/Ghost/Models/Ch30_nonPBR.Ch30_nonPBR
+
+        USkeletalMesh* MeshToAssign = LoadObject<USkeletalMesh>(nullptr, TEXT("/Game/Assets/Ghost/Models/Whiteclown/Whiteclown_N_Hallin.Whiteclown_N_Hallin"));
+        if (MeshToAssign)
+        {
+            if (USkeletalMeshComponent* SkeletalMesh = SpawnedGhost->FindComponentByClass<USkeletalMeshComponent>())
+            {
+                SkeletalMesh->SetSkeletalMesh(MeshToAssign);
+            }
+        }
+
+        // Log spawn location
+        UE_LOG(LogTemp, Warning, TEXT("Spawned ghost at location: %s"), *SpawnLocation.ToString());
     }
 }
 
