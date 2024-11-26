@@ -16,14 +16,15 @@ void AHuntGamemode::BeginPlay()
     Super::BeginPlay();
     UE_LOG(LogTemp, Warning, TEXT("GameMode BeginPlay Called!"));
 
-    FVector SpawnLocation = FVector(-60.0, -20.0, 0.0);  // Choose your spawn location (could be randomized)
-    FRotator SpawnRotation = FRotator(0, 0, 0); // Set rotation if needed
+    // Choose the spawn location (TODO based on room)
+    FVector SpawnLocation = FVector(-60.0, -20.0, 0.0);  
+    FRotator SpawnRotation = FRotator(0, 0, 0);
 
-    // Make sure that you spawn the pawn using the right class
+    // Get UClass object associated with the AGhost class
     AGhost* SpawnedGhost = GetWorld()->SpawnActor<AGhost>(
-        AGhost::StaticClass(),  // The class of the enemy pawn to spawn
-        SpawnLocation,                       // Spawn location
-        SpawnRotation                        // Spawn rotation
+        AGhost::StaticClass(),
+        SpawnLocation,
+        SpawnRotation
     );
 
     if (SpawnedGhost)
