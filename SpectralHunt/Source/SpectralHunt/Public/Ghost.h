@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Pawn.h"
+#include "GameFramework/Character.h"
 //#include "AIController.h"
 //#include "BehaviorTree/BehaviorTree.h"
 #include "Ghost.generated.h"
@@ -13,7 +13,7 @@ class AAIController;
 class UBehaviorTree;
 
 UCLASS()
-class SPECTRALHUNT_API AGhost : public APawn
+class SPECTRALHUNT_API AGhost : public ACharacter
 {
 	GENERATED_BODY()
 
@@ -24,8 +24,6 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-
 
 public:	
 	// Called every frame
@@ -41,13 +39,6 @@ public:
 	void StartHunting();*/
 
 private:
-	UPROPERTY(VisibleAnywhere)
-	USkeletalMeshComponent* GhostMesh;
-
-	// AI Components for the ghost class to navigate
-	/*UPROPERTY(VisibleAnywhere, Category = "AI")
-	AAIController* GhostAIController;*/
-
 	UPROPERTY(EditAnywhere, BlueprintReadwrite, Category = "AI", meta=(AllowPrivateAccess="true"))
 	UBehaviorTree* GhostBehaviorTree;
 };

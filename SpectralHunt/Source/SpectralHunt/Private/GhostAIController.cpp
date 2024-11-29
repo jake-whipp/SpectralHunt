@@ -3,11 +3,11 @@
 
 #include "GhostAIController.h"
 #include "BehaviorTree/BehaviorTree.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "Ghost.h"
 
 AGhostAIController::AGhostAIController(FObjectInitializer const& ObjectInitializer)
 {
-
 }
 
 void AGhostAIController::OnPossess(APawn* InPawn)

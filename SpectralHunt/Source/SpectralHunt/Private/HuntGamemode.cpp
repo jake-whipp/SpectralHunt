@@ -17,22 +17,18 @@ void AHuntGamemode::BeginPlay()
     UE_LOG(LogTemp, Warning, TEXT("GameMode BeginPlay Called!"));
 
     // Choose the spawn location (TODO based on room)
-    FVector SpawnLocation = FVector(-60.0, -20.0, 0.0);  
-    FRotator SpawnRotation = FRotator(0, 0, 0);
+    FVector const& SpawnLocation = FVector(50.0, 690.0, 88.0);
+    FRotator const& SpawnRotation = FRotator(0, 0, 0);
 
-    // Get UClass object associated with the AGhost class
-    AGhost* SpawnedGhost = GetWorld()->SpawnActor<AGhost>(
-        AGhost::StaticClass(),
-        SpawnLocation,
-        SpawnRotation
-    );
+    // Get UClass object associated with the AGhost class, and spawn an instance of it
+    UClass* GhostBPClass = LoadObject<UClass>(nullptr, TEXT("/Game/Ghost_BP.Ghost_BP_C"));
+    AGhost* SpawnedGhost = GetWorld()->SpawnActor<AGhost>(GhostBPClass, SpawnLocation, SpawnRotation);
 
     if (SpawnedGhost)
     {
         // Choose ghost mesh
-
-        // 
-        // /Game/Assets/Ghost/Models/Ch30_nonPBR.Ch30_nonPBR
+        // Whiteclown:  /Game/Assets/Ghost/Models/Whiteclown/Whiteclown_N_Hallin.Whiteclown_N_Hallin
+        // Alien:       /Game/Assets/Ghost/Models/Alien/Alien.Alien
 
         USkeletalMesh* MeshToAssign = LoadObject<USkeletalMesh>(nullptr, TEXT("/Game/Assets/Ghost/Models/Whiteclown/Whiteclown_N_Hallin.Whiteclown_N_Hallin"));
         if (MeshToAssign)
