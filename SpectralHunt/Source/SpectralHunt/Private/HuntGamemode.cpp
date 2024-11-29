@@ -21,7 +21,7 @@ void AHuntGamemode::BeginPlay()
     FRotator const& SpawnRotation = FRotator(0, 0, 0);
 
     // Get UClass object associated with the AGhost class, and spawn an instance of it
-    UClass* GhostBPClass = LoadObject<UClass>(nullptr, TEXT("/Game/Ghost_BP.Ghost_BP_C"));
+    UClass* GhostBPClass = LoadObject<UClass>(nullptr, TEXT("/Game/Entities/Ghost_BP.Ghost_BP_C"));
     AGhost* SpawnedGhost = GetWorld()->SpawnActor<AGhost>(GhostBPClass, SpawnLocation, SpawnRotation);
 
     if (SpawnedGhost)
@@ -30,7 +30,7 @@ void AHuntGamemode::BeginPlay()
         // Whiteclown:  /Game/Assets/Ghost/Models/Whiteclown/Whiteclown_N_Hallin.Whiteclown_N_Hallin
         // Alien:       /Game/Assets/Ghost/Models/Alien/Alien.Alien
 
-        USkeletalMesh* MeshToAssign = LoadObject<USkeletalMesh>(nullptr, TEXT("/Game/Assets/Ghost/Models/Whiteclown/Whiteclown_N_Hallin.Whiteclown_N_Hallin"));
+        USkeletalMesh* MeshToAssign = LoadObject<USkeletalMesh>(nullptr, TEXT("/Game/Assets/Ghost/Models/Alien/Alien.Alien"));
         if (MeshToAssign)
         {
             if (USkeletalMeshComponent* SkeletalMesh = SpawnedGhost->FindComponentByClass<USkeletalMeshComponent>())
