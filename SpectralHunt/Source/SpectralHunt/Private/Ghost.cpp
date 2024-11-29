@@ -2,6 +2,8 @@
 
 
 #include "Ghost.h"
+#include "BehaviorTree/BehaviorTree.h"
+#include "AIController.h"
 
 // Sets default values
 AGhost::AGhost()
@@ -20,6 +22,8 @@ AGhost::AGhost()
 	// TODO: assign random mesh
 	//GhostMesh->SetSkeletalMesh(GhostSkeletalMesh);
 
+	// Enable AIController use
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 
 // Called when the game starts or when spawned
@@ -27,6 +31,18 @@ void AGhost::BeginPlay()
 {
 	Super::BeginPlay();
 	UE_LOG(LogTemp, Warning, TEXT("Ghost BeginPlay Called!"));
+
+	// Get the AIController
+	/*GhostAIController = Cast<AAIController>(GetController());
+
+	if (GhostAIController && GhostBehaviorTree)
+	{
+		GhostAIController->RunBehaviorTree(GhostBehaviorTree);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Ghost AIController or BehaviorTree not set up!"));
+	}*/
 }
 
 // Called every frame
@@ -42,4 +58,18 @@ void AGhost::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 }
+
+UBehaviorTree* AGhost::GetBehaviorTree() const
+{
+	return GhostBehaviorTree;
+}
+
+//void AGhost::StartHunting()
+//{
+//	//if (GhostAIController)
+//	//{
+//	//	UE_LOG(LogTemp, Error, TEXT("hello world!"));
+//	//	//GhostAIController->GetBlackboardComponent()->SetValueAsBool("bIsHunting", true);
+//	//}
+//}
 

@@ -4,7 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+//#include "AIController.h"
+//#include "BehaviorTree/BehaviorTree.h"
 #include "Ghost.generated.h"
+
+// Forward declarations to prevent circular dependency and improve compile time
+class AAIController;
+class UBehaviorTree;
 
 UCLASS()
 class SPECTRALHUNT_API AGhost : public APawn
@@ -19,6 +25,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -26,8 +34,20 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UBehaviorTree* GetBehaviorTree() const;
+
+	// Function for the ghost to start hunting (chasing) the player
+	/*UFUNCTION(BlueprintCallable, Category = "Hunt")
+	void StartHunting();*/
+
 private:
 	UPROPERTY(VisibleAnywhere)
 	USkeletalMeshComponent* GhostMesh;
 
+	// AI Components for the ghost class to navigate
+	/*UPROPERTY(VisibleAnywhere, Category = "AI")
+	AAIController* GhostAIController;*/
+
+	UPROPERTY(EditAnywhere, BlueprintReadwrite, Category = "AI", meta=(AllowPrivateAccess="true"))
+	UBehaviorTree* GhostBehaviorTree;
 };
