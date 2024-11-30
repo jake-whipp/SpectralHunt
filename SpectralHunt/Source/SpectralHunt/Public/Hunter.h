@@ -11,6 +11,7 @@ class USpringArmComponent;
 class UCameraComponent;
 class UInputMappingContext;
 class UInputAction;
+class UAIPerceptionStimuliSourceComponent;
 
 UCLASS()
 class SPECTRALHUNT_API AHunter : public ACharacter
@@ -25,14 +26,6 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-protected:
 	// Mouse Sensitivity
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float MouseHorizontalSensitivity = 0.5f;
@@ -66,4 +59,17 @@ protected:
 	// Set camera as BlueprintReadWrite to allow usage in blueprint event graph
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Camera")
 	UCameraComponent* Camera;
+
+public:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+private:
+	// Register the hunter as a "Stimulus source" for detection by the AI (via sight)
+	UAIPerceptionStimuliSourceComponent* StimulusSource;
+
+	void SetupStimulusSource();
 };

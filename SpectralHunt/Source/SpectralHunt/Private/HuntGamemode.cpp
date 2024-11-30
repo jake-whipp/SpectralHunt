@@ -30,7 +30,7 @@ void AHuntGamemode::BeginPlay()
         // Whiteclown:  /Game/Assets/Ghost/Models/Whiteclown/Whiteclown_N_Hallin.Whiteclown_N_Hallin
         // Alien:       /Game/Assets/Ghost/Models/Alien/Alien.Alien
 
-        USkeletalMesh* MeshToAssign = LoadObject<USkeletalMesh>(nullptr, TEXT("/Game/Assets/Ghost/Models/Alien/Alien.Alien"));
+        USkeletalMesh* MeshToAssign = LoadObject<USkeletalMesh>(nullptr, TEXT("/Game/Assets/Ghost/Models/Whiteclown/Whiteclown_N_Hallin.Whiteclown_N_Hallin"));
         if (MeshToAssign)
         {
             if (USkeletalMeshComponent* SkeletalMesh = SpawnedGhost->FindComponentByClass<USkeletalMeshComponent>())
