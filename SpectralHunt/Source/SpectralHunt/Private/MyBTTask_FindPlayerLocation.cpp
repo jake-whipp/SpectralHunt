@@ -40,11 +40,11 @@ EBTNodeResult::Type UMyBTTask_FindPlayerLocation::ExecuteTask(UBehaviorTreeCompo
 		return EBTNodeResult::Failed;
 	}
 
-	// obtain npc location to use as origin, and player location to use as target
+	// Obtain npc location to use as origin, and player location to use as target
 	FVector const origin = ghost->GetActorLocation();
 	FVector target = hunter->GetActorLocation();
 
-	// get the navigation system
+	// Get the navigation system
 	UNavigationSystemV1* const navigationSystem = UNavigationSystemV1::GetCurrent(GetWorld());
 
 	FVector const distance = target - origin;
@@ -53,7 +53,7 @@ EBTNodeResult::Type UMyBTTask_FindPlayerLocation::ExecuteTask(UBehaviorTreeCompo
 		OwnerComponent.GetBlackboardComponent()->SetValueAsVector(GetSelectedBlackboardKey(), target);
 	}
 
-	// finish with success
+	// Finish with success
 	FinishLatentTask(OwnerComponent, EBTNodeResult::Succeeded);
 	return EBTNodeResult::Succeeded;
 }

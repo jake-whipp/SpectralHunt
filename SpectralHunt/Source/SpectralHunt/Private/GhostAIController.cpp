@@ -73,7 +73,7 @@ void AGhostAIController::SetupPerceptionSystem()
 	SightConfig->LoseSightRadius = SightConfig->SightRadius + 25.0f;
 
 	// FOV of the AI
-	SightConfig->PeripheralVisionAngleDegrees = 90.0f;
+	SightConfig->PeripheralVisionAngleDegrees = 120.0f;
 
 	// Time after the perceived stimulus is forgotten (seconds)
 	SightConfig->SetMaxAge(5.0f);
