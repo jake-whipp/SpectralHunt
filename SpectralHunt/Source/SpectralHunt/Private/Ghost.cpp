@@ -16,6 +16,8 @@ AGhost::AGhost()
 
 	// Enable AIController use
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
+	// GhostBehaviorTree is assigned via blueprint
 }
 
 // Called when the game starts or when spawned

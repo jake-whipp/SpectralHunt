@@ -17,6 +17,9 @@ class SPECTRALHUNT_API AGhostAIController : public AAIController
 public:
 	explicit AGhostAIController(FObjectInitializer const& ObjectInitializer);
 
+	UFUNCTION()
+	void ToggleHunting();
+
 protected:
 	virtual void OnPossess(APawn* InPawn) override;
 

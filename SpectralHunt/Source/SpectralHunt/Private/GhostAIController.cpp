@@ -15,6 +15,14 @@ AGhostAIController::AGhostAIController(FObjectInitializer const& ObjectInitializ
 	SetupPerceptionSystem();
 }
 
+void AGhostAIController::ToggleHunting()
+{
+	// Invert the IsHunting blackboard key
+	// This scope is not within a node so the key must be accessed by string/name directly
+	bool isHunting = GetBlackboardComponent()->GetValueAsBool("IsHunting");
+	GetBlackboardComponent()->SetValueAsBool("IsHunting", !isHunting);
+}
+
 void AGhostAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);

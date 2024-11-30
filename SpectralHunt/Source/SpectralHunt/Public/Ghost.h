@@ -35,7 +35,7 @@ public:
 	UBehaviorTree* GetBehaviorTree() const;
 
 	// Function for the ghost to start hunting (chasing) the player
-	/*UFUNCTION(BlueprintCallable, Category = "Hunt")
+	/*UFUNCTION(BlueprintCallable, Category = "AI")
 	void StartHunting();*/
 
 private:

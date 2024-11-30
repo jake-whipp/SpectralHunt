@@ -3,6 +3,7 @@
 
 #include "HuntGamemode.h"
 #include "GameFramework/Actor.h"
+#include "GhostAIController.h"
 #include "Ghost.h"
 
 AHuntGamemode::AHuntGamemode()
@@ -30,7 +31,7 @@ void AHuntGamemode::BeginPlay()
         // Whiteclown:  /Game/Assets/Ghost/Models/Whiteclown/Whiteclown_N_Hallin.Whiteclown_N_Hallin
         // Alien:       /Game/Assets/Ghost/Models/Alien/Alien.Alien
 
-        USkeletalMesh* MeshToAssign = LoadObject<USkeletalMesh>(nullptr, TEXT("/Game/Assets/Ghost/Models/Whiteclown/Whiteclown_N_Hallin.Whiteclown_N_Hallin"));
+        USkeletalMesh* MeshToAssign = LoadObject<USkeletalMesh>(nullptr, TEXT("/Game/Assets/Ghost/Models/Alien/Alien.Alien"));
         if (MeshToAssign)
         {
             if (USkeletalMeshComponent* SkeletalMesh = SpawnedGhost->FindComponentByClass<USkeletalMeshComponent>())
@@ -41,6 +42,10 @@ void AHuntGamemode::BeginPlay()
 
         // Log spawn location
         UE_LOG(LogTemp, Warning, TEXT("Spawned ghost at location: %s"), *SpawnLocation.ToString());
+
+        // Toggle the ghost hunting state
+        AGhostAIController* const aiController = Cast<AGhostAIController>(SpawnedGhost->GetController());
+        aiController->ToggleHunting();
     }
 }
 
