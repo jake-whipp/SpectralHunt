@@ -37,23 +37,13 @@ public:
 
 	// Audio Component to handle playing the world sounds
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sound")
-	UAudioComponent* FootstepAudioComponent;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sound")
 	UAudioComponent* HuntingAudioComponent;
 
-	void ToggleHuntingAudio();
-
-	//// Sounds to play in world whilst ghost is hunting
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
-	//USoundCue* FootstepSound;
-
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
-	//USoundCue* HuntingSound;
+	void ToggleHunting();
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadwrite, Category = "AI", meta=(AllowPrivateAccess="true"))
 	UBehaviorTree* GhostBehaviorTree;
 
-	bool HuntingAudioPlaying = false;
+	bool isHunting = false;
 };

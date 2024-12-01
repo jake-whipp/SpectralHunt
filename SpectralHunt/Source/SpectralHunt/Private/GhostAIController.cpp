@@ -15,10 +15,6 @@
 AGhostAIController::AGhostAIController(FObjectInitializer const& ObjectInitializer)
 {
 	SetupPerceptionSystem();
-
-	// Assign hunting sound within blueprint (or dynamically)
-	// /Game/Assets/Ghost/Sounds/GhostHuntingSoundCue.GhostHuntingSoundCue
-	//HuntingSound = LoadObject<USoundCue>(nullptr, TEXT("/Game/Assets/Ghost/Sounds/GhostHuntingSoundCue.GhostHuntingSoundCue")); //nullptr;
 }
 
 void AGhostAIController::ToggleHunting()
@@ -28,7 +24,8 @@ void AGhostAIController::ToggleHunting()
 	bool isHunting = GetBlackboardComponent()->GetValueAsBool("IsHunting");
 	GetBlackboardComponent()->SetValueAsBool("IsHunting", !isHunting);
 
-	Cast<AGhost>(GetPawn())->ToggleHuntingAudio();
+	// Toggle hunting within the pawn
+	Cast<AGhost>(GetPawn())->ToggleHunting();
 }
 
 void AGhostAIController::OnPossess(APawn* InPawn)
@@ -66,6 +63,7 @@ void AGhostAIController::OnTargetDetected(AActor* Actor, FAIStimulus const Stimu
 	// Can't see blackboard keys from this scope, so it must be manually assigned via a string parameter
 	// The stimulus is passed however so we can check that it was successful (true = seen, false = lost sight)
 	GetBlackboardComponent()->SetValueAsBool("CanSeePlayer", Stimulus.WasSuccessfullySensed());
+
 	UE_LOG(LogTemp, Warning, TEXT("%s"), Stimulus.WasSuccessfullySensed() ? TEXT("Ghost found Hunter") : TEXT("Ghost lost Hunter"));
 }
 

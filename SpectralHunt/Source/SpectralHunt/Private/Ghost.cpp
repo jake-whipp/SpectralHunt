@@ -16,6 +16,9 @@ AGhost::AGhost()
 	// TODO: assign random mesh
 	//GhostMesh->SetSkeletalMesh(GhostSkeletalMesh);
 
+	// Hide ghost by default (isn't hunting)
+	GetMesh()->SetVisibility(isHunting);
+
 	// Enable AIController use
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
@@ -25,10 +28,6 @@ AGhost::AGhost()
 	HuntingAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("Hunting Audio Component"));
 	HuntingAudioComponent->SetupAttachment(RootComponent);
 	HuntingAudioComponent->bAutoActivate = false;
-
-	FootstepAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("Footstep Audio Component"));
-	FootstepAudioComponent->SetupAttachment(RootComponent);
-	FootstepAudioComponent->bAutoActivate = false;
 
 	// SoundCues are assigned via blueprint
 }
@@ -51,7 +50,6 @@ void AGhost::Tick(float DeltaTime)
 void AGhost::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 }
 
 UBehaviorTree* AGhost::GetBehaviorTree() const
@@ -59,26 +57,29 @@ UBehaviorTree* AGhost::GetBehaviorTree() const
 	return GhostBehaviorTree;
 }
 
-void AGhost::ToggleHuntingAudio()
+void AGhost::ToggleHunting()
 {
 	// Toggle flag
-	HuntingAudioPlaying = !HuntingAudioPlaying;
+	isHunting = !isHunting;
 
 	// Guard statement to prevent errors
-	//if (!FootstepAudioComponent) // !HuntingAudioComponent || 
-	//{
-	//	return;
-	//}
-
-	UE_LOG(LogTemp, Warning, TEXT("%s"), HuntingAudioPlaying ? TEXT("HuntingAudioPlaying: True") : TEXT("HuntingAudioPlaying: False"));
-
-	if (HuntingAudioPlaying)
+	if (!HuntingAudioComponent)
 	{
-		FootstepAudioComponent->Play();
+		return;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("%s"), isHunting ? TEXT("isHunting: True") : TEXT("isHunting: False"));
+
+	// Toggle the ghost's visibility
+	GetMesh()->SetVisibility(isHunting);
+
+	if (isHunting)
+	{
+		HuntingAudioComponent->Play();
 	}
 	else
 	{
-		FootstepAudioComponent->Stop();
+		HuntingAudioComponent->Stop();
 	}
 }
 
