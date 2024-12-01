@@ -3,6 +3,8 @@
 
 #include "Ghost.h"
 #include "BehaviorTree/BehaviorTree.h"
+#include "Sound/SoundCue.h"
+#include "Components/AudioComponent.h"
 #include "GhostAIController.h"
 
 // Sets default values
@@ -18,6 +20,17 @@ AGhost::AGhost()
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
 	// GhostBehaviorTree is assigned via blueprint
+
+	// Initialise the audio components
+	HuntingAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("Hunting Audio Component"));
+	HuntingAudioComponent->SetupAttachment(RootComponent);
+	HuntingAudioComponent->bAutoActivate = false;
+
+	FootstepAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("Footstep Audio Component"));
+	FootstepAudioComponent->SetupAttachment(RootComponent);
+	FootstepAudioComponent->bAutoActivate = false;
+
+	// SoundCues are assigned via blueprint
 }
 
 // Called when the game starts or when spawned
@@ -44,5 +57,28 @@ void AGhost::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 UBehaviorTree* AGhost::GetBehaviorTree() const
 {
 	return GhostBehaviorTree;
+}
+
+void AGhost::ToggleHuntingAudio()
+{
+	// Toggle flag
+	HuntingAudioPlaying = !HuntingAudioPlaying;
+
+	// Guard statement to prevent errors
+	//if (!FootstepAudioComponent) // !HuntingAudioComponent || 
+	//{
+	//	return;
+	//}
+
+	UE_LOG(LogTemp, Warning, TEXT("%s"), HuntingAudioPlaying ? TEXT("HuntingAudioPlaying: True") : TEXT("HuntingAudioPlaying: False"));
+
+	if (HuntingAudioPlaying)
+	{
+		FootstepAudioComponent->Play();
+	}
+	else
+	{
+		FootstepAudioComponent->Stop();
+	}
 }
 

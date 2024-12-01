@@ -7,12 +7,18 @@
 #include "Perception/AIPerceptionTypes.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
+#include "Components/AudioComponent.h"
+//#include "Kismet/GameplayStatics.h"
 #include "Hunter.h"
 #include "Ghost.h"
 
 AGhostAIController::AGhostAIController(FObjectInitializer const& ObjectInitializer)
 {
 	SetupPerceptionSystem();
+
+	// Assign hunting sound within blueprint (or dynamically)
+	// /Game/Assets/Ghost/Sounds/GhostHuntingSoundCue.GhostHuntingSoundCue
+	//HuntingSound = LoadObject<USoundCue>(nullptr, TEXT("/Game/Assets/Ghost/Sounds/GhostHuntingSoundCue.GhostHuntingSoundCue")); //nullptr;
 }
 
 void AGhostAIController::ToggleHunting()
@@ -21,6 +27,8 @@ void AGhostAIController::ToggleHunting()
 	// This scope is not within a node so the key must be accessed by string/name directly
 	bool isHunting = GetBlackboardComponent()->GetValueAsBool("IsHunting");
 	GetBlackboardComponent()->SetValueAsBool("IsHunting", !isHunting);
+
+	Cast<AGhost>(GetPawn())->ToggleHuntingAudio();
 }
 
 void AGhostAIController::OnPossess(APawn* InPawn)
@@ -29,7 +37,7 @@ void AGhostAIController::OnPossess(APawn* InPawn)
 
 	// Cast the pawn type provided into the intended type (ghost)
 	AGhost* const ghost = Cast<AGhost>(InPawn);
-	
+
 	// Check that it has been casted correctly (i.e. not nullptr)
 	if (ghost)
 	{
@@ -75,13 +83,13 @@ void AGhostAIController::SetupPerceptionSystem()
 	// Create a new perception component
 	auto* const perceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("Perception Component"));
 	SetPerceptionComponent(*perceptionComponent);
-	
+
 	// Configure the perception component
-	SightConfig->SightRadius = 500.0f;
+	SightConfig->SightRadius = 1000.0f;
 	SightConfig->LoseSightRadius = SightConfig->SightRadius + 25.0f;
 
 	// FOV of the AI
-	SightConfig->PeripheralVisionAngleDegrees = 120.0f;
+	SightConfig->PeripheralVisionAngleDegrees = 360.0f;
 
 	// Time after the perceived stimulus is forgotten (seconds)
 	SightConfig->SetMaxAge(5.0f);

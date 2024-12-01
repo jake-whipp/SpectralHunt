@@ -11,6 +11,7 @@
 // Forward declarations to prevent circular dependency and improve compile time
 class AAIController;
 class UBehaviorTree;
+class USoundCue;
 
 UCLASS()
 class SPECTRALHUNT_API AGhost : public ACharacter
@@ -34,11 +35,25 @@ public:
 
 	UBehaviorTree* GetBehaviorTree() const;
 
-	// Function for the ghost to start hunting (chasing) the player
-	/*UFUNCTION(BlueprintCallable, Category = "AI")
-	void StartHunting();*/
+	// Audio Component to handle playing the world sounds
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sound")
+	UAudioComponent* FootstepAudioComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sound")
+	UAudioComponent* HuntingAudioComponent;
+
+	void ToggleHuntingAudio();
+
+	//// Sounds to play in world whilst ghost is hunting
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	//USoundCue* FootstepSound;
+
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	//USoundCue* HuntingSound;
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadwrite, Category = "AI", meta=(AllowPrivateAccess="true"))
 	UBehaviorTree* GhostBehaviorTree;
+
+	bool HuntingAudioPlaying = false;
 };
