@@ -20,6 +20,9 @@ public:
 	UFUNCTION()
 	void ToggleHunting();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float GhostStalkSpeedIncrease = 0.25f;
+
 protected:
 	virtual void OnPossess(APawn* InPawn) override;
 

@@ -72,4 +72,13 @@ private:
 	UAIPerceptionStimuliSourceComponent* StimulusSource;
 
 	void SetupStimulusSource();
+
+	// Variable to track the alive state of the player
+	bool IsAlive;
+
+	// Function/dynamic delegate to handle the collision with the ghost
+	UFUNCTION()
+	void OnHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit);
+
+	void KillPlayer();
 };

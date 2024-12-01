@@ -39,11 +39,18 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sound")
 	UAudioComponent* HuntingAudioComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float DefaultSpeed = 350.0f;
+
 	void ToggleHunting();
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadwrite, Category = "AI", meta=(AllowPrivateAccess="true"))
 	UBehaviorTree* GhostBehaviorTree;
 
-	bool isHunting = false;
+	bool IsHunting = false;
+
+	// Function/dynamic delegate to handle the collision with the player
+	UFUNCTION()
+	void OnHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit);
 };

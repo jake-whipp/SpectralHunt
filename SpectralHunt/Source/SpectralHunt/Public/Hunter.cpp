@@ -5,6 +5,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Perception/AISense_Sight.h"
+#include "Components/CapsuleComponent.h"
 #include "Camera/CameraComponent.h"
 
 // Sets default values
@@ -15,6 +16,10 @@ AHunter::AHunter()
 
 	// Make sure this pawn is possessed by default
 	//AutoPossessPlayer = EAutoReceiveInput::Player0;
+
+	// Enable collision profile
+	UCapsuleComponent* Capsule = GetCapsuleComponent();
+	Capsule->SetNotifyRigidBodyCollision(true);
 
 	// Setup springarm and camera
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("Spring Arm"));
@@ -28,13 +33,18 @@ AHunter::AHunter()
 
 	// Setup the stimulus source
 	SetupStimulusSource();
+
+	// Register player as "alive" (default state)
+	IsAlive = true;
 }
 
 // Called when the game starts or when spawned
 void AHunter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	// Set the dynamic delegate of the collision
+	OnActorHit.AddDynamic(this, &AHunter::OnHit);
 }
 
 // Called every frame
@@ -64,4 +74,37 @@ void AHunter::SetupStimulusSource()
 	// Register the stimulus source for sensing via sight
 	StimulusSource->RegisterForSense(TSubclassOf<UAISense_Sight>());
 	StimulusSource->RegisterWithPerceptionSystem();
+}
+
+void AHunter::KillPlayer()
+{
+	// Register player as dead
+	IsAlive = false;
+
+	// Disable collision profile
+	GetCapsuleComponent()->SetNotifyRigidBodyCollision(false);
+}
+
+void AHunter::OnHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit)
+{
+	// Do not allow collisions if player is dead and the collision profile is not yet disabled
+	if (!IsAlive)
+	{
+		return;
+	}
+
+	if (!OtherActor)
+	{
+		return;
+	}
+
+	// Make sure that the other character is the ghost, which is a descendant of the ACharacter class
+	if (OtherActor->GetClass()->IsChildOf(ACharacter::StaticClass()))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Collision in player with ghost occurred"));
+
+		// Collision with the ghost in hunting mode = death
+		// TODO: make sure ghost is in hunting state
+		KillPlayer();
+	}
 }

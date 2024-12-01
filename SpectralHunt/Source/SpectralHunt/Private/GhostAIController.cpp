@@ -8,7 +8,6 @@
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "Components/AudioComponent.h"
-//#include "Kismet/GameplayStatics.h"
 #include "Hunter.h"
 #include "Ghost.h"
 

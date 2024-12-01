@@ -2,6 +2,8 @@
 
 #include "MyBTTask_ChasePlayer.h"
 #include "GhostAIController.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
@@ -24,6 +26,12 @@ EBTNodeResult::Type UMyBTTask_ChasePlayer::ExecuteTask(UBehaviorTreeComponent& O
 	
 	// Move to this location by using our derived AIController
 	UAIBlueprintHelperLibrary::SimpleMoveToLocation(ghostAIController, playerLocation);
+
+	// Get the ghost this BehaviorTree is acting on
+	ACharacter* ghost = Cast<ACharacter>(ghostAIController->GetPawn());
+	
+	// Speed up the ghost
+	ghost->GetCharacterMovement()->MaxWalkSpeed += ghostAIController->GhostStalkSpeedIncrease;
 
 	// Finish with success
 	FinishLatentTask(OwnerComponent, EBTNodeResult::Succeeded);
