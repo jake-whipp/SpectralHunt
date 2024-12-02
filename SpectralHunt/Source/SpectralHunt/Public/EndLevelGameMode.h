@@ -4,22 +4,19 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "HuntGamemode.generated.h"
-
-// Foward declarations to improve compile time and prevent circular dependency
-class AGhost;
+#include "EndLevelGameMode.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class SPECTRALHUNT_API AHuntGamemode : public AGameModeBase
+class SPECTRALHUNT_API AEndLevelGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 	
 public:
     // Constructor
-    AHuntGamemode();
+    AEndLevelGameMode();
 
     // Called when the game starts
     virtual void BeginPlay() override;
@@ -27,15 +24,10 @@ public:
     // Called every frame
     virtual void Tick(float DeltaTime) override;
 
-    void PerformGhostHunt();
-
 private:
-    AGhost* SpawnedGhost;
+    FTimerHandle ReturnLevelTimer;
 
-    FTimerHandle HuntTimer;
+    float ReturnTime = 5.0f;
 
-    float HuntDuration = 30.0f;
-
-    UFUNCTION()
-    void HuntTimerUp();
+    void ReturnToMainLevel();
 };

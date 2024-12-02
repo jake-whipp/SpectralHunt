@@ -5,8 +5,20 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Perception/AISense_Sight.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Camera/CameraComponent.h"
+
+#include "InputAction.h"
+#include "InputMappingContext.h"
+#include "EnhancedInputSubsystems.h"
+#include "EnhancedInputComponent.h"
+#include "InputActionValue.h"
+
+#include "CustomPlayerController.h"
+#include "GameFramework/PlayerController.h"
+
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AHunter::AHunter()
@@ -45,6 +57,19 @@ void AHunter::BeginPlay()
 
 	// Set the dynamic delegate of the collision
 	OnActorHit.AddDynamic(this, &AHunter::OnHit);
+
+	// Setup the input system
+	ACustomPlayerController* playerController = Cast<ACustomPlayerController>(GetController());
+
+	if (!playerController)
+	{
+		return;
+	}
+
+	UEnhancedInputLocalPlayerSubsystem* inputSubsystem;
+	inputSubsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(playerController->GetLocalPlayer());
+
+	inputSubsystem->AddMappingContext(hunterMappingContext, 0);
 }
 
 // Called every frame
@@ -59,6 +84,16 @@ void AHunter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	// Bind actions to delegate functions
+	UEnhancedInputComponent* EIC = Cast<UEnhancedInputComponent>(PlayerInputComponent);
+	EIC->BindAction(MoveForwardAction, ETriggerEvent::Triggered, this, &AHunter::MoveForwardHandler);
+	EIC->BindAction(StrafeAction, ETriggerEvent::Triggered, this, &AHunter::StrafeHandler);
+	EIC->BindAction(TurnAction, ETriggerEvent::Triggered, this, &AHunter::TurnHandler);
+	EIC->BindAction(LookUpAction, ETriggerEvent::Triggered, this, &AHunter::LookUpHandler);
+
+
+	EIC->BindAction(SprintAction, ETriggerEvent::Started, this, &AHunter::SprintHandler);
+	EIC->BindAction(SprintAction, ETriggerEvent::Completed, this, &AHunter::SprintHandler);
 }
 
 void AHunter::SetupStimulusSource()
@@ -76,13 +111,16 @@ void AHunter::SetupStimulusSource()
 	StimulusSource->RegisterWithPerceptionSystem();
 }
 
-void AHunter::KillPlayer()
+void AHunter::Kill()
 {
 	// Register player as dead
 	IsAlive = false;
 
 	// Disable collision profile
 	GetCapsuleComponent()->SetNotifyRigidBodyCollision(false);
+
+	// Swap levels
+	UGameplayStatics::OpenLevel(GetWorld(), "EndLevel");
 }
 
 void AHunter::OnHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit)
@@ -105,6 +143,100 @@ void AHunter::OnHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse
 
 		// Collision with the ghost in hunting mode = death
 		// TODO: make sure ghost is in hunting state
-		KillPlayer();
+		Kill();
 	}
+}
+
+void AHunter::MoveForwardHandler(const FInputActionValue& Value)
+{
+	AddMovementInput(GetActorForwardVector() * Value.Get<float>());
+}
+
+void AHunter::StrafeHandler(const FInputActionValue& Value)
+{
+	AddMovementInput(GetActorRightVector() * Value.Get<float>());
+}
+
+void AHunter::TurnHandler(const FInputActionValue& Value)
+{
+	AddControllerYawInput(Value.Get<float>() * MouseHorizontalSensitivity);
+}
+
+void AHunter::LookUpHandler(const FInputActionValue& Value)
+{
+	float fValue = Value.Get<float>() * MouseVerticalSensitivity;
+
+	if (fValue != 0.0f)
+	{
+		FRotator NewRotation = Camera->GetRelativeRotation();
+
+		// Limit the pitch between -89.0 and 89.0 degrees
+		NewRotation.Pitch = FMath::Clamp(NewRotation.Pitch - fValue, -89.0f, 89.0f); // Limit pitch
+		Camera->SetRelativeRotation(NewRotation);
+	}
+}
+
+void AHunter::SprintHandler(const FInputActionValue& Value)
+{
+	bool keyIsHeld = Value.Get<bool>();
+
+	// Don't handle sprinting if recovering
+	if (IsRecovering)
+	{
+		return;
+	}
+
+	if (keyIsHeld)
+	{
+		StartSprint();
+	}
+	else
+	{
+		StopSprint();
+	}
+}
+
+void AHunter::StartSprint()
+{
+	// Raise flag that player is sprinting
+	IsSprinting = true;
+
+	// Update the max walking speed to a higher value so that the player can accelerate
+	GetCharacterMovement()->MaxWalkSpeed = SprintingSpeed;
+
+	// Set timer to StopSprint function
+	GetWorld()->GetTimerManager().SetTimer(SprintTimerHandle, this, &AHunter::StopSprint, MaxSprintDuration, false);
+}
+
+void AHunter::StopSprint()
+{
+	// In-case the sprint key was released early, check for any active exhaustion timers and cancel them,
+	// so that this function is not called twice
+	if (GetWorld()->GetTimerManager().IsTimerActive(SprintTimerHandle))
+	{
+		GetWorld()->GetTimerManager().ClearTimer(SprintTimerHandle);
+	}
+
+	// Don't start the recovery timer etc. if the player is already recovering
+	if (IsRecovering || !IsSprinting)
+	{
+		return;
+	}
+
+	// Lower flag that player is sprinting
+	IsSprinting = false;
+
+	// Raise flag that player is recovering
+	IsRecovering = true;
+
+	GetCharacterMovement()->MaxWalkSpeed = RegularSpeed;
+
+	// Set timer to Recover function
+	GetWorld()->GetTimerManager().SetTimer(RecoverTimerHandle, this, &AHunter::Recover, SprintExhaustedCooldown, false);
+}
+
+void AHunter::Recover()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Player is finished recovering"));
+	IsRecovering = false;
 }

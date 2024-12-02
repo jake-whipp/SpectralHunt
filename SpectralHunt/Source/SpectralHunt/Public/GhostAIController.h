@@ -13,7 +13,7 @@ UCLASS()
 class SPECTRALHUNT_API AGhostAIController : public AAIController
 {
 	GENERATED_BODY()
-	
+
 public:
 	explicit AGhostAIController(FObjectInitializer const& ObjectInitializer);
 
@@ -33,4 +33,6 @@ private:
 
 	UFUNCTION()
 	void OnTargetDetected(AActor* Actor, FAIStimulus const Stimulus);
+
+	FTimerHandle HuntTimer;
 };

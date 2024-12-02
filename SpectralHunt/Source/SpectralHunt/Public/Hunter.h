@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "InputActionValue.h"
 #include "Hunter.generated.h"
 
 // Forward declarations to prevent circular dependency and improve compile time
@@ -41,7 +42,7 @@ protected:
 	float SprintingSpeed = 620.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float SprintTimer = 2.0f;
+	float MaxSprintDuration = 2.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float SprintExhaustedCooldown = 3.0f;
@@ -52,7 +53,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool IsRecovering = false;
 
-
+	// Camera Related Properties
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArm;
 
@@ -67,11 +68,51 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	// Create the functionality actions and mapping context to assign in the blueprint
+	UPROPERTY(EditAnywhere)
+	UInputMappingContext* hunterMappingContext;
+
+	UPROPERTY(EditAnywhere)
+	UInputAction* MoveForwardAction;
+
+	UPROPERTY(EditAnywhere)
+	UInputAction* StrafeAction;
+
+	UPROPERTY(EditAnywhere)
+	UInputAction* TurnAction;
+
+	UPROPERTY(EditAnywhere)
+	UInputAction* LookUpAction;
+
+	UPROPERTY(EditAnywhere)
+	UInputAction* SprintAction;
+
+	void MoveForwardHandler(const FInputActionValue& Value);
+	void StrafeHandler(const FInputActionValue& Value);
+	void TurnHandler(const FInputActionValue& Value);
+	void LookUpHandler(const FInputActionValue& Value);
+	void SprintHandler(const FInputActionValue& Value);
+
+	// Function for the ghost to interface with in order to "kill" the player
+	void Kill();
+
 private:
 	// Register the hunter as a "Stimulus source" for detection by the AI (via sight)
 	UAIPerceptionStimuliSourceComponent* StimulusSource;
 
 	void SetupStimulusSource();
+
+	// Sprint-related timers
+	FTimerHandle SprintTimerHandle;
+
+	FTimerHandle RecoverTimerHandle;
+
+	// Sprint-related methods
+	void StartSprint();
+
+	void StopSprint();
+
+	void Recover();
 
 	// Variable to track the alive state of the player
 	bool IsAlive;
@@ -79,6 +120,4 @@ private:
 	// Function/dynamic delegate to handle the collision with the ghost
 	UFUNCTION()
 	void OnHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit);
-
-	void KillPlayer();
 };

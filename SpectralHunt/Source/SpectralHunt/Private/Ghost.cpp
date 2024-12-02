@@ -1,13 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Ghost.h"
 #include "BehaviorTree/BehaviorTree.h"
+
 #include "Sound/SoundCue.h"
 #include "Components/AudioComponent.h"
+
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "GameFramework/Character.h"
+
 #include "GhostAIController.h"
 
 // Sets default values
