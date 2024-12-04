@@ -48,6 +48,10 @@ AHunter::AHunter()
 
 	// Register player as "alive" (default state)
 	IsAlive = true;
+
+	// Register pawn to be considered possessable by the playercontroller, when switching 
+	// between cameras etc.
+	Tags.Add("Possessable");
 }
 
 // Called when the game starts or when spawned

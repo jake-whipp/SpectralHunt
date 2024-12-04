@@ -23,6 +23,10 @@ ARemoteCamera::ARemoteCamera()
 
 	Camera->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
 	Camera->SetRelativeRotation(FRotator(0.0f, 0.0f, 0.0f));
+
+	// Register pawn to be considered possessable by the playercontroller, when switching 
+	// between cameras etc.
+	Tags.Add("Possessable");
 }
 
 // Called when the game starts or when spawned

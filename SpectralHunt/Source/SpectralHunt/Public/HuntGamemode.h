@@ -8,6 +8,7 @@
 
 // Foward declarations to improve compile time and prevent circular dependency
 class AGhost;
+class ANavMeshBoundsVolume;
 
 /**
  * 
@@ -29,13 +30,22 @@ public:
 
     void PerformGhostHunt();
 
+    UPROPERTY(BlueprintReadWrite, EditAnywhere)
+    TArray<FVector> AcceptableSpawnLocations;
+
 private:
+    // For spawning the ghost
+    FVector GetRandomSpawnableLocation();
+
     AGhost* SpawnedGhost;
 
+    // For handling hunts
     FTimerHandle HuntTimer;
 
     float HuntDuration = 30.0f;
 
     UFUNCTION()
     void HuntTimerUp();
+
+    
 };

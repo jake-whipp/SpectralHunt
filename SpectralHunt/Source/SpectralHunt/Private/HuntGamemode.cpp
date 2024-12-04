@@ -3,7 +3,10 @@
 
 #include "HuntGamemode.h"
 #include "GameFramework/Actor.h"
+
 #include "GhostAIController.h"
+#include "GameFramework/PlayerController.h"
+
 #include "Ghost.h"
 
 AHuntGamemode::AHuntGamemode()
@@ -21,8 +24,11 @@ void AHuntGamemode::BeginPlay()
 	UE_LOG(LogTemp, Warning, TEXT("GameMode BeginPlay Called!"));
 
 	// Choose the spawn location (TODO based on room)
-	FVector const& SpawnLocation = FVector(50.0, 690.0, 88.0);
+	FVector const& SpawnLocation = GetRandomSpawnableLocation();
 	FRotator const& SpawnRotation = FRotator(0, 0, 0);
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
 
 	// Get UClass object associated with the AGhost class, and spawn an instance of it
 	UClass* GhostBPClass = LoadObject<UClass>(nullptr, TEXT("/Game/Entities/Ghost_BP.Ghost_BP_C"));
@@ -85,4 +91,16 @@ void AHuntGamemode::HuntTimerUp()
 	// Get the AI Controller of the spawned ghost, and turn the hunt off
 	AGhostAIController* const aiController = Cast<AGhostAIController>(SpawnedGhost->GetController());
 	aiController->ToggleHunting();
+}
+
+FVector AHuntGamemode::GetRandomSpawnableLocation()
+{
+	if (AcceptableSpawnLocations.Num() > 0)
+	{
+		// Select a random spawn location from the array
+		int RandomIndex = FMath::RandRange(0, AcceptableSpawnLocations.Num() - 1);
+		return AcceptableSpawnLocations[RandomIndex];
+	}
+
+	return FVector::Zero();
 }
