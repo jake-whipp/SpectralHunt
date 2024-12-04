@@ -57,7 +57,6 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArm;
 
-	// Set camera as BlueprintReadWrite to allow usage in blueprint event graph
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Camera")
 	UCameraComponent* Camera;
 
