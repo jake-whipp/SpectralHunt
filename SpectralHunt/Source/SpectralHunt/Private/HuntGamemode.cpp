@@ -27,9 +27,6 @@ void AHuntGamemode::BeginPlay()
 	FVector const& SpawnLocation = GetRandomSpawnableLocation();
 	FRotator const& SpawnRotation = FRotator(0, 0, 0);
 
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
-
 	// Get UClass object associated with the AGhost class, and spawn an instance of it
 	UClass* GhostBPClass = LoadObject<UClass>(nullptr, TEXT("/Game/Entities/Ghost_BP.Ghost_BP_C"));
 	SpawnedGhost = GetWorld()->SpawnActor<AGhost>(GhostBPClass, SpawnLocation, SpawnRotation);

@@ -48,6 +48,8 @@ void ACustomPlayerController::SwapPawnHandler(const FInputActionValue& Value)
 	APawn* newPawn = PossessableEntities[ActivePawnIndex];
 	Possess(newPawn);
 
+	// Hide the Hunter character's mesh depending on whether it's controlled or not, as we don't want to see it
+	// in first person, but we do want to see it whilst controlling the cameras
 	if (newPawn->IsA(ARemoteCamera::StaticClass()))
 	{
 		PossessableEntities[HunterIndex]->FindComponentByClass<USkeletalMeshComponent>()->SetVisibility(true);
