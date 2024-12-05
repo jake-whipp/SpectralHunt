@@ -36,13 +36,21 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<APawn*> PossessableEntities;
 
-	// Reference to the UI widget Blueprint class
+	// Reference to the Camera UI widget Blueprint class
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<UUserWidget> CamInterfaceWidgetClass;
 
-	// UI Widget (Can be assigned via BP), instance of the above class property
+	// UI Widget, an instance of the above class property
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	UUserWidget* CamInterfaceWidget;
+
+
+	// Reference to the Guessing UI widget Blueprint class
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<UUserWidget> GuessingMenuInterfaceWidgetClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	UUserWidget* GuessingMenuInterfaceWidget;
 
 protected:
 	virtual void BeginPlay() override;

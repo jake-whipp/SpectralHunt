@@ -83,6 +83,15 @@ void ACustomPlayerController::BeginPlay()
 			CamInterfaceWidget->AddToViewport();
 		}
 	}
+
+	if (GuessingMenuInterfaceWidgetClass)
+	{
+		GuessingMenuInterfaceWidget = CreateWidget<UUserWidget>(this, GuessingMenuInterfaceWidgetClass);
+		if (GuessingMenuInterfaceWidget)
+		{
+			GuessingMenuInterfaceWidget->AddToViewport();
+		}
+	}
 }
 
 void ACustomPlayerController::SetupInputComponent()

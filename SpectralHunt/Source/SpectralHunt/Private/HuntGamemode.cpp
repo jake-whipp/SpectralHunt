@@ -10,6 +10,9 @@
 #include "Math/UnrealMathUtility.h"
 
 #include "Ghost.h"
+#include "GhostTypeComponent.h"
+
+#include "Prop.h"
 
 AHuntGamemode::AHuntGamemode()
 {
@@ -20,8 +23,10 @@ AHuntGamemode::AHuntGamemode()
 	SpawnedGhost = nullptr;
 
 	// Assign default values to hunts
-	HuntDuration = 30.0f;
-	HuntCooldown = 90.0f;
+	const FGhostTypeProperties* DefaultProperties = GhostTypePropertiesMap.Find(EGhostType::Undefined);
+
+	HuntDuration = DefaultProperties->HuntDuration;
+	HuntCooldown = DefaultProperties->HuntCooldown;
 }
 
 void AHuntGamemode::BeginPlay()
@@ -30,7 +35,7 @@ void AHuntGamemode::BeginPlay()
 	UE_LOG(LogTemp, Warning, TEXT("GameMode BeginPlay Called!"));
 
 	// Choose the spawned ghost type
-	EGhostType CustomGhostType = AGhost::GetRandomGhostType();
+	EGhostType CustomGhostType = UGhostTypeComponent::GetRandomGhostType();
 	UE_LOG(LogTemp, Warning, TEXT("Ghost Type: %d"), CustomGhostType);
 
 	// Choose the spawn location (TODO based on room)
@@ -41,36 +46,29 @@ void AHuntGamemode::BeginPlay()
 	UClass* GhostBPClass = LoadObject<UClass>(nullptr, TEXT("/Game/Entities/Ghost_BP.Ghost_BP_C"));
 	SpawnedGhost = GetWorld()->SpawnActor<AGhost>(GhostBPClass, SpawnLocation, SpawnRotation);
 
+	// Check that the ghost spawned properly before attempting to do anything with it
 	if (!SpawnedGhost)
 	{
+		UE_LOG(LogTemp, Error, TEXT("HuntGamemode: The Ghost did not spawn correctly!"));
 		return;
 	}
 
-	SpawnedGhost->Initialise(CustomGhostType);
-
-
-	// Choose ghost mesh
-	// Whiteclown:  /Game/Assets/Ghost/Models/Whiteclown/Whiteclown_N_Hallin.Whiteclown_N_Hallin
-	// Alien:       /Game/Assets/Ghost/Models/Alien/Alien.Alien
-
-	USkeletalMesh* MeshToAssign = LoadObject<USkeletalMesh>(nullptr, TEXT("/Game/Assets/Ghost/Models/Alien/Alien.Alien"));
-	if (MeshToAssign)
-	{
-		if (USkeletalMeshComponent* SkeletalMesh = SpawnedGhost->FindComponentByClass<USkeletalMeshComponent>())
-		{
-			SkeletalMesh->SetSkeletalMesh(MeshToAssign);
-		}
-	}
+	// Update the properties of the ghost
+	SpawnedGhost->GhostTypeComponent->SetGhostType(CustomGhostType);
+	SpawnedGhost->Initialise();
 
 	// Log spawn location
 	UE_LOG(LogTemp, Warning, TEXT("Spawned ghost at location: %s"), *SpawnLocation.ToString());	
 
 	// Update hunt properties
-	HuntDuration = SpawnedGhost->HuntDuration;
-	HuntCooldown = SpawnedGhost->HuntCooldown;
+	const FGhostTypeProperties* properties = SpawnedGhost->GhostTypeComponent->GetGhostProperties();
+	HuntDuration = properties->HuntDuration;
+	HuntCooldown = properties->HuntCooldown;
 
-	// Start a hunt
-	PerformGhostHunt();
+	// Begin hunting every X seconds (as determined by HuntCooldown) on loop
+	GetWorld()->GetTimerManager().SetTimer(HuntCooldownTimer, this, &AHuntGamemode::PerformGhostHunt, (HuntCooldown + HuntDuration), true);
+
+	//PerformGhostHunt();
 }
 
 void AHuntGamemode::Tick(float DeltaTime)

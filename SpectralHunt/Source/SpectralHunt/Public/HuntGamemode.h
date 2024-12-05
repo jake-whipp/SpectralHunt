@@ -8,7 +8,7 @@
 
 // Foward declarations to improve compile time and prevent circular dependency
 class AGhost;
-class ANavMeshBoundsVolume;
+//class ANavMeshBoundsVolume;
 
 /**
  * 
@@ -41,6 +41,8 @@ private:
 
     // For handling hunts
     FTimerHandle HuntTimer;
+
+    FTimerHandle HuntCooldownTimer;
 
     float HuntDuration;
 

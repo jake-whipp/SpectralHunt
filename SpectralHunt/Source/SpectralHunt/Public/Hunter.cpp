@@ -2,6 +2,8 @@
 
 
 #include "Hunter.h"
+#include "Ghost.h"
+
 #include "GameFramework/SpringArmComponent.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Perception/AISense_Sight.h"
@@ -32,6 +34,8 @@ AHunter::AHunter()
 	// Enable collision profile
 	UCapsuleComponent* Capsule = GetCapsuleComponent();
 	Capsule->SetNotifyRigidBodyCollision(true);
+
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
 
 	// Setup springarm and camera
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("Spring Arm"));
@@ -130,23 +134,23 @@ void AHunter::Kill()
 void AHunter::OnHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit)
 {
 	// Do not allow collisions if player is dead and the collision profile is not yet disabled
-	if (!IsAlive)
-	{
-		return;
-	}
-
-	if (!OtherActor)
+	if (!IsAlive || !OtherActor)
 	{
 		return;
 	}
 
 	// Make sure that the other character is the ghost, which is a descendant of the ACharacter class
-	if (OtherActor->GetClass()->IsChildOf(ACharacter::StaticClass()))
+	if (!OtherActor->GetClass()->IsChildOf(ACharacter::StaticClass()))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Collision in player with ghost occurred"));
+		return;
+	}
 
-		// Collision with the ghost in hunting mode = death
-		// TODO: make sure ghost is in hunting state
+	UE_LOG(LogTemp, Warning, TEXT("Collision in player with ghost occurred"));
+
+	// Collision with the ghost whilst it is in hunting mode = death
+	AGhost* ghost = Cast<AGhost>(OtherActor);
+	if (ghost->GetHuntingState())
+	{
 		Kill();
 	}
 }
