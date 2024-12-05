@@ -34,5 +34,5 @@ private:
 	UFUNCTION()
 	void OnTargetDetected(AActor* Actor, FAIStimulus const Stimulus);
 
-	FTimerHandle HuntTimer;
+	//FTimerHandle HuntTimer;
 };

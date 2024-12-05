@@ -11,6 +11,32 @@
 
 #include "GhostAIController.h"
 
+// Define the different properties for the various ghost types
+const TMap<EGhostType, FGhostProperties> GhostTypePropertiesMap = {
+   {
+	   EGhostType::Undefined,
+	   {
+		   250.0f,	// Speed
+		   30.0f,	// Duration
+		   90.0f,	// Cooldown
+		   true	// Accelerate in LOS
+	   }
+   },
+   {
+	   EGhostType::Specter,
+	   {450.0f, 20.0f, 90.0f, false}
+   },
+   {
+	   EGhostType::Shinigami,
+	   {280.0f, 30.0f, 60.0f, true}
+   },
+   {
+	   EGhostType::Spirit,
+	   {250.0f, 40.0f, 90.0f, true}
+   }
+};
+
+
 // Sets default values
 AGhost::AGhost()
 {
@@ -20,8 +46,13 @@ AGhost::AGhost()
 	// TODO: assign random mesh
 	//GhostMesh->SetSkeletalMesh(GhostSkeletalMesh);
 
-	// Assign default ghost speed
-	GetCharacterMovement()->MaxWalkSpeed = DefaultSpeed;
+	// Set default properties, in-case Initialise() is not called
+	GhostType = EGhostType::Undefined;
+	
+	DefaultSpeed = 350.0f;
+	HuntDuration = 30.0f;
+	HuntCooldown = 90.0f;
+	AccelerateOnSight = true;
 
 	// Enable collision profile
 	UCapsuleComponent* Capsule = GetCapsuleComponent();
@@ -130,3 +161,55 @@ void AGhost::OnHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse,
 	}
 }
 
+void AGhost::Initialise()
+{
+	// No need to initialise if ghost type has not been set
+	if (GhostType == EGhostType::Undefined)
+	{
+		return;
+	}
+
+	// Import properties
+	const FGhostProperties* properties = GhostTypePropertiesMap.Find(GhostType);
+	
+	DefaultSpeed = properties->Speed;
+	HuntDuration = properties->HuntDuration;
+	HuntCooldown = properties->HuntCooldown;
+	AccelerateOnSight = properties->AccelerateOnSight;
+
+	// Assign the default ghost speed in CharacterMovement component
+	GetCharacterMovement()->MaxWalkSpeed = DefaultSpeed;
+}
+
+EGhostType AGhost::GetRandomGhostType()
+{
+	// Get the range of enum values
+	int Min = static_cast<int>(EGhostType::Specter);  // First enum value
+	int Max = static_cast<int>(EGhostType::Spirit);   // Last enum value
+
+	// Generate a random integer in the range
+	int RandomValue = FMath::RandRange(Min, Max);
+
+	// Cast the integer back to the enum type
+	return static_cast<EGhostType>(RandomValue);
+}
+
+void AGhost::Initialise(EGhostType NewGhostType)
+{
+	// Set the ghost type
+	GhostType = NewGhostType;
+
+	// Import properties
+	const FGhostProperties* properties = GhostTypePropertiesMap.Find(GhostType);
+
+	DefaultSpeed = properties->Speed;
+	HuntDuration = properties->HuntDuration;
+	HuntCooldown = properties->HuntCooldown;
+	AccelerateOnSight = properties->AccelerateOnSight;
+
+	// Assign the default ghost speed in CharacterMovement component
+	GetCharacterMovement()->MaxWalkSpeed = DefaultSpeed;
+
+	UE_LOG(LogTemp, Warning, TEXT("%f, %f"), DefaultSpeed, properties->Speed);
+	UE_LOG(LogTemp, Warning, TEXT("%f"), GetCharacterMovement()->MaxWalkSpeed);
+}

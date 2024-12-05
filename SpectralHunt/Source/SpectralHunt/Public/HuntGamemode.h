@@ -42,7 +42,9 @@ private:
     // For handling hunts
     FTimerHandle HuntTimer;
 
-    float HuntDuration = 30.0f;
+    float HuntDuration;
+
+    float HuntCooldown;
 
     UFUNCTION()
     void HuntTimerUp();

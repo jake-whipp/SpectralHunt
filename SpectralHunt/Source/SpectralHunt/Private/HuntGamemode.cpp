@@ -7,6 +7,8 @@
 #include "GhostAIController.h"
 #include "GameFramework/PlayerController.h"
 
+#include "Math/UnrealMathUtility.h"
+
 #include "Ghost.h"
 
 AHuntGamemode::AHuntGamemode()
@@ -16,12 +18,20 @@ AHuntGamemode::AHuntGamemode()
 
 	// The ghost will be assigned a proper reference during BeginPlay()
 	SpawnedGhost = nullptr;
+
+	// Assign default values to hunts
+	HuntDuration = 30.0f;
+	HuntCooldown = 90.0f;
 }
 
 void AHuntGamemode::BeginPlay()
 {
 	Super::BeginPlay();
 	UE_LOG(LogTemp, Warning, TEXT("GameMode BeginPlay Called!"));
+
+	// Choose the spawned ghost type
+	EGhostType CustomGhostType = AGhost::GetRandomGhostType();
+	UE_LOG(LogTemp, Warning, TEXT("Ghost Type: %d"), CustomGhostType);
 
 	// Choose the spawn location (TODO based on room)
 	FVector const& SpawnLocation = GetRandomSpawnableLocation();
@@ -35,6 +45,9 @@ void AHuntGamemode::BeginPlay()
 	{
 		return;
 	}
+
+	SpawnedGhost->Initialise(CustomGhostType);
+
 
 	// Choose ghost mesh
 	// Whiteclown:  /Game/Assets/Ghost/Models/Whiteclown/Whiteclown_N_Hallin.Whiteclown_N_Hallin
@@ -52,7 +65,11 @@ void AHuntGamemode::BeginPlay()
 	// Log spawn location
 	UE_LOG(LogTemp, Warning, TEXT("Spawned ghost at location: %s"), *SpawnLocation.ToString());	
 
-	//controller
+	// Update hunt properties
+	HuntDuration = SpawnedGhost->HuntDuration;
+	HuntCooldown = SpawnedGhost->HuntCooldown;
+
+	// Start a hunt
 	PerformGhostHunt();
 }
 
@@ -85,7 +102,8 @@ void AHuntGamemode::HuntTimerUp()
 		return;
 	}
 
-	// Get the AI Controller of the spawned ghost, and turn the hunt off
+	// Get the AI Controller of the spawned ghost, and turn the hunt off,
+	// because the controller is in command of the behaviortree that the ghost follows
 	AGhostAIController* const aiController = Cast<AGhostAIController>(SpawnedGhost->GetController());
 	aiController->ToggleHunting();
 }
