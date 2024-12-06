@@ -60,6 +60,30 @@ void ACustomPlayerController::SwapPawnHandler(const FInputActionValue& Value)
 	}
 }
 
+void ACustomPlayerController::OpenGuidebookHandler(const FInputActionValue& Value)
+{
+	// Toggle open flag
+	GuidebookOpen = !GuidebookOpen;
+
+	if (!GuidebookInterfaceWidgetClass || !GuidebookInterfaceWidget)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No widget"))
+		return;
+	}
+
+	if (GuidebookOpen)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Open"))
+		GuidebookInterfaceWidget->AddToViewport();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Close"))
+		GuidebookInterfaceWidget->RemoveFromViewport();
+	}
+	
+}
+
 void ACustomPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
@@ -92,6 +116,11 @@ void ACustomPlayerController::BeginPlay()
 			GuessingMenuInterfaceWidget->AddToViewport();
 		}
 	}
+
+	if (GuidebookInterfaceWidgetClass)
+	{
+		GuidebookInterfaceWidget = CreateWidget<UUserWidget>(this, GuidebookInterfaceWidgetClass);
+	}
 }
 
 void ACustomPlayerController::SetupInputComponent()
@@ -101,6 +130,8 @@ void ACustomPlayerController::SetupInputComponent()
 	// Bind actions to delegate functions
 	UEnhancedInputComponent* EIC = Cast<UEnhancedInputComponent>(InputComponent);
 	EIC->BindAction(SwapPawnAction, ETriggerEvent::Started, this, &ACustomPlayerController::SwapPawnHandler);
+	EIC->BindAction(OpenGuidebookAction, ETriggerEvent::Started, this, &ACustomPlayerController::OpenGuidebookHandler);
+
 }
 
 void ACustomPlayerController::AddPossessableEntities()

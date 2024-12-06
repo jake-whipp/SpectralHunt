@@ -44,11 +44,21 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sound")
 	UAudioComponent* InteractionAudioComponent;
 
+	// Audio Component to handle playing footsteps (so sounds don't overwrite each other)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sound")
+	UAudioComponent* FootstepAudioComponent;
+
 	UPROPERTY(EditAnywhere, Category = "Sound")
 	USoundCue* InteractionSoundHiss;
 
 	UPROPERTY(EditAnywhere, Category = "Sound")
 	USoundCue* InteractionSoundDialogue;
+
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	USoundCue* InteractionSoundGroan;
+
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	USoundCue* InteractionSoundFootstep;
 
 	UGhostTypeComponent* GhostTypeComponent;
 
@@ -56,6 +66,8 @@ public:
 	void ToggleHunting();
 
 	void PerformInteraction();
+
+	void RevealFootstep();
 	
 	bool GetHuntingState();
 

@@ -123,6 +123,8 @@ void AHunter::SetupStimulusSource()
 
 void AHunter::Kill()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Killing player"));
+
 	// Register player as dead
 	IsAlive = false;
 

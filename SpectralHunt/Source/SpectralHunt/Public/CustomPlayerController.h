@@ -31,7 +31,12 @@ public:
 	UPROPERTY(EditAnywhere)
 	UInputAction* SwapPawnAction;
 
+	UPROPERTY(EditAnywhere)
+	UInputAction* OpenGuidebookAction;
+
 	void SwapPawnHandler(const FInputActionValue& Value);
+
+	void OpenGuidebookHandler(const FInputActionValue& Value);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<APawn*> PossessableEntities;
@@ -51,6 +56,14 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	UUserWidget* GuessingMenuInterfaceWidget;
+	
+
+	// UI For guidebook
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<UUserWidget> GuidebookInterfaceWidgetClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	UUserWidget* GuidebookInterfaceWidget;
 
 protected:
 	virtual void BeginPlay() override;
@@ -64,4 +77,6 @@ private:
 	int HunterIndex = 0;
 
 	void AddPossessableEntities();
+
+	bool GuidebookOpen = false;
 };

@@ -29,7 +29,7 @@ EBTNodeResult::Type UMyBTTask_FindRandomLocation::ExecuteTask(UBehaviorTreeCompo
 	}
 
 	// obtain npc location to use as origin
-	FVector const origin = ghost->GetActorLocation();
+	//FVector const origin//ghost->GetActorLocation();
 
 	// get the navigation system
 	UNavigationSystemV1* const navigationSystem = UNavigationSystemV1::GetCurrent(GetWorld());
@@ -37,7 +37,7 @@ EBTNodeResult::Type UMyBTTask_FindRandomLocation::ExecuteTask(UBehaviorTreeCompo
 	{
 		FNavLocation location;
 
-		if (navigationSystem->GetRandomPointInNavigableRadius(origin, SearchRadius, location))
+		if (navigationSystem->GetRandomPointInNavigableRadius(OriginPoint, SearchRadius, location))
 		{
 			UBlackboardComponent* blackboardComponent = OwnerComponent.GetBlackboardComponent();
 

@@ -31,12 +31,12 @@ void AMainMenuGameMode::BeginPlay()
 
 	// Spawn the hunter and ghost, which will feature in the main menu as props
 	SpawnHunter(
-		FVector(370.0f, 380.0f, 88.0f),
+		FVector(370.0f, 380.0f, 188.0f),
 		FRotator(0.0f)
 	);
 
 	SpawnGhost(
-		FVector(-40.0f, 380.0f, 88.0f),
+		FVector(-40.0f, 380.0f, 188.0f),
 		FRotator(0.0f)
 	);
 

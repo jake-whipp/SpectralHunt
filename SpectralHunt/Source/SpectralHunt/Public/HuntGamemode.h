@@ -31,6 +31,8 @@ public:
 
     void PerformInteraction();
 
+    void RevealGhostFootstep();
+
     UPROPERTY(BlueprintReadWrite, EditAnywhere)
     TArray<FVector> AcceptableSpawnLocations;
 
@@ -55,6 +57,8 @@ private:
     FTimerHandle HuntTimer;
 
     FTimerHandle HuntCooldownTimer;
+    
+    FTimerHandle FirstHuntCooldownTimer;
 
     float HuntDuration;
 
@@ -67,4 +71,9 @@ private:
     FTimerHandle InteractionCooldownTimer;
 
     float InteractionCooldown;
+
+    // For handling footstep interactions
+    FTimerHandle FootstepInteractionCooldownTimer;
+
+    float FootstepInteractionCooldown;
 };

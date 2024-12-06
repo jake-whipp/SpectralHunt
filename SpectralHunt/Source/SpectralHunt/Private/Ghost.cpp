@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Ghost.h"
+#include "Hunter.h"
 #include "BehaviorTree/BehaviorTree.h"
 
 #include "Sound/SoundCue.h"
@@ -48,6 +49,10 @@ AGhost::AGhost()
 	InteractionAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("Interaction Audio Component"));
 	InteractionAudioComponent->SetupAttachment(RootComponent);
 	InteractionAudioComponent->bAutoActivate = false;
+
+	FootstepAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("Footstep Audio Component"));
+	FootstepAudioComponent->SetupAttachment(RootComponent);
+	FootstepAudioComponent->bAutoActivate = false;
 
 	// SoundCues are assigned via blueprint
 }
@@ -123,6 +128,8 @@ void AGhost::PerformInteraction()
 	EGhostInteractionType interactionType = GhostTypeComponent->GetGhostProperties()->InteractionType;
 
 	// Read the value and perform the interaction based on the type
+	UE_LOG(LogTemp, Warning, TEXT("%d"), (int)interactionType);
+
 	switch (interactionType)
 	{
 	case EGhostInteractionType::Undefined:
@@ -130,19 +137,37 @@ void AGhost::PerformInteraction()
 		break;
 
 	case EGhostInteractionType::AttackSoundHiss:
+		UE_LOG(LogTemp, Warning, TEXT("Ghost hiss"));
 		InteractionAudioComponent->SetSound(InteractionSoundHiss);
-		InteractionAudioComponent->Play();
 		break;
 
 	case EGhostInteractionType::AttackSoundDialogue:
+		UE_LOG(LogTemp, Warning, TEXT("Ghost dialogue"));
 		InteractionAudioComponent->SetSound(InteractionSoundDialogue);
-		InteractionAudioComponent->Play();
+		break;
+
+	case EGhostInteractionType::AttackSoundGroan:
+		UE_LOG(LogTemp, Warning, TEXT("Ghost groan"));
+		InteractionAudioComponent->SetSound(InteractionSoundGroan);
 		break;
 
 	case EGhostInteractionType::ThrowProp:
 		UE_LOG(LogTemp, Warning, TEXT("Warning: Ghost ThrowProp event not yet implemented"));
 		break;
 	}
+
+	InteractionAudioComponent->Play();
+}
+
+void AGhost::RevealFootstep()
+{
+	if (!InteractionAudioComponent)
+	{
+		return;
+	}
+
+	FootstepAudioComponent->SetSound(InteractionSoundFootstep);
+	FootstepAudioComponent->Play();
 }
 
 bool AGhost::GetHuntingState()
@@ -168,6 +193,10 @@ void AGhost::OnHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse,
 	if (OtherActor->GetClass()->IsChildOf(ACharacter::StaticClass()))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Collision in ghost with player occurred"));
+
+		// Kill the hunter before ending the hunt
+		AHunter* hunter = Cast<AHunter>(OtherActor);
+		hunter->Kill();
 
 		// Collision with the ghost in hunting mode = death, hunt over
 		// 

@@ -1,4 +1,4 @@
-/// Fill out your copyright notice in the Description page of Project Settings.
+ /// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -22,7 +22,8 @@ enum class EGhostInteractionType : uint8
 	Undefined = 0,
 	ThrowProp = 1,
 	AttackSoundHiss = 2,
-	AttackSoundDialogue = 3
+	AttackSoundDialogue = 3,
+	AttackSoundGroan = 4
 };
 
 USTRUCT(BlueprintType)
@@ -46,7 +47,10 @@ struct FGhostTypeProperties
 	EGhostInteractionType InteractionType = EGhostInteractionType::Undefined;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float InteractionCooldown = 60.0f;
+	float InteractionCooldown = 65.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float FootstepCooldown = 13.0f;
 
 	// Default constructor
 	FGhostTypeProperties() = default;

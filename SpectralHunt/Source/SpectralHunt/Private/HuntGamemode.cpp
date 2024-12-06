@@ -33,11 +33,15 @@ AHuntGamemode::AHuntGamemode()
 	HuntCooldown = DefaultProperties->HuntCooldown;
 	
 	InteractionCooldown = DefaultProperties->InteractionCooldown;
+	FootstepInteractionCooldown = DefaultProperties->FootstepCooldown;
 
 	// Initialise the audio components
 	BackgroundAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("Background Audio Component"));
 	BackgroundAudioComponent->SetupAttachment(RootComponent);
 	BackgroundAudioComponent->bAutoActivate = true;
+
+	// Initialise widget
+	ObjectiveInterfaceWidget = nullptr;
 }
 
 void AHuntGamemode::BeginPlay()
@@ -59,7 +63,7 @@ void AHuntGamemode::BeginPlay()
 	EGhostType CustomGhostType = UGhostTypeComponent::GetRandomGhostType();
 	UE_LOG(LogTemp, Warning, TEXT("Ghost Type: %d"), CustomGhostType);
 
-	// Choose the spawn location (TODO based on room)
+	// Choose the spawn location
 	FVector const& SpawnLocation = GetRandomSpawnableLocation();
 	FRotator const& SpawnRotation = FRotator(0, 0, 0);
 
@@ -86,11 +90,18 @@ void AHuntGamemode::BeginPlay()
 	HuntDuration = properties->HuntDuration;
 	HuntCooldown = properties->HuntCooldown;
 
+	// Hunt early the first time around (wait half the regular time)
+	GetWorld()->GetTimerManager().SetTimer(FirstHuntCooldownTimer, this, &AHuntGamemode::PerformGhostHunt, (HuntCooldown / 2.0f), false);
+
+
 	// Begin hunting every X seconds (as determined by HuntCooldown) on loop
 	GetWorld()->GetTimerManager().SetTimer(HuntCooldownTimer, this, &AHuntGamemode::PerformGhostHunt, (HuntCooldown + HuntDuration), true);
 
 	// Begin interacting every Y seconds (as determined by InteractionCooldown) on loop, even if the ghost is hunting
 	GetWorld()->GetTimerManager().SetTimer(InteractionCooldownTimer, this, &AHuntGamemode::PerformInteraction, InteractionCooldown, true);
+
+	// Begin making footstep sounds every Z seconds (as determined by FootstepInteractionCooldown) on loop, even if the ghost is hunting
+	GetWorld()->GetTimerManager().SetTimer(FootstepInteractionCooldownTimer, this, &AHuntGamemode::RevealGhostFootstep, FootstepInteractionCooldown, true);
 }
 
 void AHuntGamemode::Tick(float DeltaTime)
@@ -124,6 +135,17 @@ void AHuntGamemode::PerformInteraction()
 
 	UE_LOG(LogTemp, Warning, TEXT("Performing Ghost Interaction"));
 	SpawnedGhost->PerformInteraction();
+}
+
+void AHuntGamemode::RevealGhostFootstep()
+{
+	if (!SpawnedGhost)
+	{
+		return;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Performing Ghost Footstep"));
+	SpawnedGhost->RevealFootstep();
 }
 
 void AHuntGamemode::HuntTimerUp()
