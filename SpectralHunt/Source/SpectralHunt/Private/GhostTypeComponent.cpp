@@ -9,26 +9,29 @@ const TMap<EGhostType, FGhostTypeProperties> GhostTypePropertiesMap = {
 		{
 		   250.0f,	// Speed
 		   30.0f,	// Duration
-		   90.0f,	// Cooldown
-		   true		// Accelerate in LOS
+		   50.0f,	// Cooldown
+		   true,	// Accelerate in LOS
+		   EGhostInteractionType::Undefined	// Interaction type
 		}
    },
    {
 		EGhostType::Specter,
 		{
-			450.0f, // Speed
+			350.0f, // Speed
 			20.0f,	// Duration
-			90.0f,	// Cooldown
-			false	// Accelerate in LOS
+			40.0f,	// Cooldown
+			false,	// Accelerate in LOS
+			EGhostInteractionType::AttackSoundDialogue
 		}
    },
    {
 		EGhostType::Shinigami,
 		{
 			280.0f,	// Speed
-			30.0f,	// Duration
+			20.0f,	// Duration
 			60.0f,	// Cooldown
-			true	// Accelerate in LOS
+			true,	// Accelerate in LOS
+			EGhostInteractionType::AttackSoundDialogue
 		}
    },
    {
@@ -36,8 +39,9 @@ const TMap<EGhostType, FGhostTypeProperties> GhostTypePropertiesMap = {
 		{
 			250.0f,	// Speed
 			40.0f,	// Duration
-			90.0f,	// Cooldown
-			true	// Accelerate in LOS
+			40.0f,	// Cooldown
+			true,	// Accelerate in LOS
+			EGhostInteractionType::AttackSoundHiss
 		}
    }
 };

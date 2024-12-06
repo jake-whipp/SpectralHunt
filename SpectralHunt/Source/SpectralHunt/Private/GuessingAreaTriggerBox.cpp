@@ -17,6 +17,10 @@ AGuessingAreaTriggerBox::AGuessingAreaTriggerBox()
 	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("Audio Component"));
 	AudioComponent->SetupAttachment(RootComponent);
 	AudioComponent->bAutoActivate = false;
+
+	// Will be assigned via BP
+	BookOpenSound = nullptr;
+	BookCloseSound = nullptr;
 }
 
 void AGuessingAreaTriggerBox::BeginPlay()

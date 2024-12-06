@@ -24,10 +24,15 @@ public:
     // Called every frame
     virtual void Tick(float DeltaTime) override;
 
+    // Widget class/type for the "Win Screen", assigned in BP
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+    TSubclassOf<class UUserWidget> WinWidgetClass;
+
+    // Widget class/type for the "Lose Screen", assigned in BP
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+    TSubclassOf<class UUserWidget> LoseWidgetClass;
+
 private:
-    FTimerHandle ReturnLevelTimer;
-
-    float ReturnTime = 5.0f;
-
-    void ReturnToMainLevel();
+    // Function to display the appropriate widget
+    void DisplayEndScreen();
 };

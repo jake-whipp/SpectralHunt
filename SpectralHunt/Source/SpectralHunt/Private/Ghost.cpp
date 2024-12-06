@@ -45,6 +45,10 @@ AGhost::AGhost()
 	HuntingAudioComponent->SetupAttachment(RootComponent);
 	HuntingAudioComponent->bAutoActivate = false;
 
+	InteractionAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("Interaction Audio Component"));
+	InteractionAudioComponent->SetupAttachment(RootComponent);
+	InteractionAudioComponent->bAutoActivate = false;
+
 	// SoundCues are assigned via blueprint
 }
 
@@ -105,6 +109,39 @@ void AGhost::ToggleHunting()
 
 		// Reset the ghost's speed
 		GetCharacterMovement()->MaxWalkSpeed = GhostTypeComponent->GetGhostProperties()->Speed;
+	}
+}
+
+void AGhost::PerformInteraction()
+{
+	if (!GhostTypeComponent)
+	{
+		return;
+	}
+
+	// Get the interaction type of the ghost based on the GhostTypeComponent
+	EGhostInteractionType interactionType = GhostTypeComponent->GetGhostProperties()->InteractionType;
+
+	// Read the value and perform the interaction based on the type
+	switch (interactionType)
+	{
+	case EGhostInteractionType::Undefined:
+		UE_LOG(LogTemp, Error, TEXT("Error: Ghost cannot interact because it is set to Undefined!"));
+		break;
+
+	case EGhostInteractionType::AttackSoundHiss:
+		InteractionAudioComponent->SetSound(InteractionSoundHiss);
+		InteractionAudioComponent->Play();
+		break;
+
+	case EGhostInteractionType::AttackSoundDialogue:
+		InteractionAudioComponent->SetSound(InteractionSoundDialogue);
+		InteractionAudioComponent->Play();
+		break;
+
+	case EGhostInteractionType::ThrowProp:
+		UE_LOG(LogTemp, Warning, TEXT("Warning: Ghost ThrowProp event not yet implemented"));
+		break;
 	}
 }
 

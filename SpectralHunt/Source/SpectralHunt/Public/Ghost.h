@@ -36,13 +36,26 @@ public:
 
 	UBehaviorTree* GetBehaviorTree() const;
 
-	// Audio Component to handle playing the world sounds
+	// Audio Component to handle playing the hunting sounds
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sound")
 	UAudioComponent* HuntingAudioComponent;
 
+	// Audio Component to handle playing the interaction sounds
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sound")
+	UAudioComponent* InteractionAudioComponent;
+
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	USoundCue* InteractionSoundHiss;
+
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	USoundCue* InteractionSoundDialogue;
+
 	UGhostTypeComponent* GhostTypeComponent;
 
+
 	void ToggleHunting();
+
+	void PerformInteraction();
 	
 	bool GetHuntingState();
 

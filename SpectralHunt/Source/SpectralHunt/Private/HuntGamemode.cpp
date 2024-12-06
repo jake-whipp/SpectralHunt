@@ -7,10 +7,14 @@
 #include "GhostAIController.h"
 #include "GameFramework/PlayerController.h"
 
+#include "Components/AudioComponent.h"
+
 #include "Math/UnrealMathUtility.h"
 
 #include "Ghost.h"
 #include "GhostTypeComponent.h"
+
+#include "Blueprint/UserWidget.h"
 
 #include "Prop.h"
 
@@ -27,12 +31,29 @@ AHuntGamemode::AHuntGamemode()
 
 	HuntDuration = DefaultProperties->HuntDuration;
 	HuntCooldown = DefaultProperties->HuntCooldown;
+	
+	InteractionCooldown = DefaultProperties->InteractionCooldown;
+
+	// Initialise the audio components
+	BackgroundAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("Background Audio Component"));
+	BackgroundAudioComponent->SetupAttachment(RootComponent);
+	BackgroundAudioComponent->bAutoActivate = true;
 }
 
 void AHuntGamemode::BeginPlay()
 {
 	Super::BeginPlay();
 	UE_LOG(LogTemp, Warning, TEXT("GameMode BeginPlay Called!"));
+
+	// Add the objective widget to the viewport
+	if (ObjectiveInterfaceWidgetClass)
+	{
+		ObjectiveInterfaceWidget = CreateWidget<UUserWidget>(GetWorld()->GetFirstPlayerController(), ObjectiveInterfaceWidgetClass);
+		if (ObjectiveInterfaceWidget)
+		{
+			ObjectiveInterfaceWidget->AddToViewport();
+		}
+	}
 
 	// Choose the spawned ghost type
 	EGhostType CustomGhostType = UGhostTypeComponent::GetRandomGhostType();
@@ -68,7 +89,8 @@ void AHuntGamemode::BeginPlay()
 	// Begin hunting every X seconds (as determined by HuntCooldown) on loop
 	GetWorld()->GetTimerManager().SetTimer(HuntCooldownTimer, this, &AHuntGamemode::PerformGhostHunt, (HuntCooldown + HuntDuration), true);
 
-	//PerformGhostHunt();
+	// Begin interacting every Y seconds (as determined by InteractionCooldown) on loop, even if the ghost is hunting
+	GetWorld()->GetTimerManager().SetTimer(InteractionCooldownTimer, this, &AHuntGamemode::PerformInteraction, InteractionCooldown, true);
 }
 
 void AHuntGamemode::Tick(float DeltaTime)
@@ -91,6 +113,17 @@ void AHuntGamemode::PerformGhostHunt()
 
 	// Set a timer to stop the hunt
 	GetWorld()->GetTimerManager().SetTimer(HuntTimer, this, &AHuntGamemode::HuntTimerUp, HuntDuration, false);
+}
+
+void AHuntGamemode::PerformInteraction()
+{
+	if (!SpawnedGhost)
+	{
+		return;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Performing Ghost Interaction"));
+	SpawnedGhost->PerformInteraction();
 }
 
 void AHuntGamemode::HuntTimerUp()

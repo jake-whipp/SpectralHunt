@@ -20,6 +20,8 @@
 #include "CustomPlayerController.h"
 #include "GameFramework/PlayerController.h"
 
+#include "CustomGameInstance.h"
+
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -126,6 +128,14 @@ void AHunter::Kill()
 
 	// Disable collision profile
 	GetCapsuleComponent()->SetNotifyRigidBodyCollision(false);
+
+	// Set the game as lost in the GameState
+	UCustomGameInstance* customGameInstance = Cast<UCustomGameInstance>(GetGameInstance());
+
+	if (customGameInstance)
+	{
+		customGameInstance->PlayerWon = false;
+	}
 
 	// Swap levels
 	UGameplayStatics::OpenLevel(GetWorld(), "EndLevel");

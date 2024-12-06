@@ -8,7 +8,6 @@
 
 // Foward declarations to improve compile time and prevent circular dependency
 class AGhost;
-//class ANavMeshBoundsVolume;
 
 /**
  * 
@@ -30,8 +29,21 @@ public:
 
     void PerformGhostHunt();
 
+    void PerformInteraction();
+
     UPROPERTY(BlueprintReadWrite, EditAnywhere)
     TArray<FVector> AcceptableSpawnLocations;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sound")
+    UAudioComponent* BackgroundAudioComponent;
+
+    // Reference to the Camera UI widget Blueprint class
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+    TSubclassOf<UUserWidget> ObjectiveInterfaceWidgetClass;
+
+    // UI Widget, an instance of the above class property
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+    UUserWidget* ObjectiveInterfaceWidget;
 
 private:
     // For spawning the ghost
@@ -51,5 +63,8 @@ private:
     UFUNCTION()
     void HuntTimerUp();
 
-    
+    // For handling interactions
+    FTimerHandle InteractionCooldownTimer;
+
+    float InteractionCooldown;
 };

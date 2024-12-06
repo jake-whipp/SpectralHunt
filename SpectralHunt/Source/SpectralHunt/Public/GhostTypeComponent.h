@@ -16,6 +16,15 @@ enum class EGhostType : uint8
 	Spirit = 3
 };
 
+UENUM(BlueprintType)
+enum class EGhostInteractionType : uint8
+{
+	Undefined = 0,
+	ThrowProp = 1,
+	AttackSoundHiss = 2,
+	AttackSoundDialogue = 3
+};
+
 USTRUCT(BlueprintType)
 struct FGhostTypeProperties
 {
@@ -33,12 +42,18 @@ struct FGhostTypeProperties
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool AccelerateOnSight = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EGhostInteractionType InteractionType = EGhostInteractionType::Undefined;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float InteractionCooldown = 60.0f;
+
 	// Default constructor
 	FGhostTypeProperties() = default;
 
 	// Inline, parameterised constructor
-	FGhostTypeProperties(float inSpeed, float inHuntDuration, float inHuntCooldown, bool inAccelerateOnSight)
-		: Speed(inSpeed), HuntDuration(inHuntDuration), HuntCooldown(inHuntCooldown), AccelerateOnSight(inAccelerateOnSight)
+	FGhostTypeProperties(float inSpeed, float inHuntDuration, float inHuntCooldown, bool inAccelerateOnSight, EGhostInteractionType inInteractionType)
+		: Speed(inSpeed), HuntDuration(inHuntDuration), HuntCooldown(inHuntCooldown), AccelerateOnSight(inAccelerateOnSight), InteractionType(inInteractionType)
 	{}
 };
 
